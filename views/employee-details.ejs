@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Details</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 70%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 8px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        td {
+            text-align: center;
+        }
+
+        .actions-form {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .actions-form button {
+            margin: 5px;
+            padding: 5px 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        a {
+            text-decoration: none;
+            color: #007BFF;
+            font-weight: bold;
+        }
+
+        .add-link {
+            margin-top: 20px;
+        }
+
+        /* Additional styles for the search form */
+        .search-form {
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            width: 300px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 8px 12px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+
+        .search-button:hover {
+            background-color: #555;
+        }
+
+        /* Additional style for highlighting the row */
+        .highlighted-row {
+            background-color: #b3ffb3; /* Light green color */
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Employee Details</h1>
+    <!-- Search form to search for employees by name or ID -->
+    <form action="/employee-details" method="get" class="search-form" onsubmit="highlightRow();">
+        <input type="text" id="search" name="search" class="search-input" placeholder="Search by name or ID">
+        <button type="submit" class="search-button">Search</button>
+    </form>
+
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Contact Number</th>
+            <th>Actions</th>
+        </tr>
+        <% employees.forEach((employee) => { %>
+            <tr <% if (employee.id === searchedEmployeeId) { %> class="highlighted-row" <% } %>>
+                <td><%= employee.id %></td>
+                <td><%= employee.name %></td>
+                <td><%= employee.email %></td>
+                <td><%= employee.department %></td>
+                <td><%= employee.contact_number %></td>
+                <td class="actions-form">
+                    <form action="/employee/delete/<%= employee.id %>" method="post">
+                        <button type="submit">Delete</button>
+                    </form>
+                    <form action="/employee/update/<%= employee.id %>" method="get">
+                        <button type="submit">Update</button>
+                    </form>
+                    
+                </td>
+            </tr>
+        <% }); %>
+    </table>
+    <a href="/employee/add" class="add-link">Add Employee</a>
+
+    <script>
+        function highlightRow() {
+            const searchInput = document.getElementById('search');
+            const searchValue = searchInput.value.trim().toLowerCase();
+            const table = document.querySelector('table');
+            const rows = table.querySelectorAll('tr');
+
+            // Remove the existing highlighted rows
+            rows.forEach(row => row.classList.remove('highlighted-row'));
+
+            // Find the row that matches the search value
+            for (const row of rows) {
+                const cells = row.querySelectorAll('td');
+                let found = false;
+                cells.forEach(cell => {
+                    if (cell.textContent.trim().toLowerCase().includes(searchValue)) {
+                        found = true;
+                    }
+                });
+                if (found) {
+                    row.classList.add('highlighted-row');
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>
